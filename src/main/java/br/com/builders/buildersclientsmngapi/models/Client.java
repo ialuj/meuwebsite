@@ -1,11 +1,14 @@
 package br.com.builders.buildersclientsmngapi.models;
 
+import java.time.LocalDate;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.AbstractAggregateRoot;
@@ -44,7 +47,7 @@ public class Client extends AbstractAggregateRoot<Client> {
 	@Embedded
 	@Column(name = "email")
 	private Email email;
-	
+
 	@Column(name = "state")
 	@NotNull(message = "State can not be empty")
 	private State state;
@@ -53,9 +56,9 @@ public class Client extends AbstractAggregateRoot<Client> {
 	@NotNull(message = "Neighbourhood can not be empty")
 	private Neighbourhood neighbourhood;
 
-	@Column(name = "avenue_or_road")
+	@Column(name = "avenue_road")
 	@NotNull(message = "Avenue or road can not be empty")
-	private AvenueOrRoad avenueOrRoad;
+	private AvenueRoad avenueRoad;
 
 	@Column(name = "house_number")
 	@NotNull(message = "House number can not be empty")
@@ -65,12 +68,22 @@ public class Client extends AbstractAggregateRoot<Client> {
 		super();
 	}
 
+	public Client(@NotEmpty(message = "Client Full Name can not be empty") String fullName,
+			@NotNull(message = "Client Birth Date can not be null") LocalDate birthDate,
+			@NotEmpty(message = "RG can not be empty") String rg,
+			@NotEmpty(message = "CPF can not be empty") String cpf, String phoneNumber, String email, String state,
+			String neighbourhood, String avenueRoad, String houseNumber) {
+		this(new FullName(fullName), new BirthDate(birthDate), new Rg(rg), new Cpf(cpf), new PhoneNumber(phoneNumber),
+				new Email(email), new State(state), new Neighbourhood(neighbourhood), new AvenueRoad(avenueRoad),
+				new HouseNumber(houseNumber));
+	}
+
 	public Client(@NotNull(message = "Full name can not be empty") FullName fullName,
 			@NotNull(message = "Birth date can not be empty") BirthDate birthDate,
 			@NotNull(message = "RG can not be empty") Rg rg, @NotNull(message = "CPF can not be empty") Cpf cpf,
 			PhoneNumber phoneNumber, Email email, @NotNull(message = "State can not be empty") State state,
 			@NotNull(message = "Neighbourhood can not be empty") Neighbourhood neighbourhood,
-			@NotNull(message = "Avenue or road can not be empty") AvenueOrRoad avenueOrRoad,
+			@NotNull(message = "Avenue or road can not be empty") AvenueRoad avenueRoad,
 			@NotNull(message = "House number can not be empty") HouseNumber houseNumber) {
 		super();
 		this.fullName = fullName;
@@ -81,7 +94,28 @@ public class Client extends AbstractAggregateRoot<Client> {
 		this.email = email;
 		this.state = state;
 		this.neighbourhood = neighbourhood;
-		this.avenueOrRoad = avenueOrRoad;
+		this.avenueRoad = avenueRoad;
+		this.houseNumber = houseNumber;
+	}
+
+	public Client(Long id, @NotNull(message = "Full name can not be empty") FullName fullName,
+			@NotNull(message = "Birth date can not be empty") BirthDate birthDate,
+			@NotNull(message = "RG can not be empty") Rg rg, @NotNull(message = "CPF can not be empty") Cpf cpf,
+			PhoneNumber phoneNumber, Email email, @NotNull(message = "State can not be empty") State state,
+			@NotNull(message = "Neighbourhood can not be empty") Neighbourhood neighbourhood,
+			@NotNull(message = "Avenue or road can not be empty") AvenueRoad avenueRoad,
+			@NotNull(message = "House number can not be empty") HouseNumber houseNumber) {
+		super();
+		this.id = id;
+		this.fullName = fullName;
+		this.birthDate = birthDate;
+		this.rg = rg;
+		this.cpf = cpf;
+		this.phoneNumber = phoneNumber;
+		this.email = email;
+		this.state = state;
+		this.neighbourhood = neighbourhood;
+		this.avenueRoad = avenueRoad;
 		this.houseNumber = houseNumber;
 	}
 
@@ -157,12 +191,12 @@ public class Client extends AbstractAggregateRoot<Client> {
 		this.neighbourhood = neighbourhood;
 	}
 
-	public AvenueOrRoad getAvenueOrRoad() {
-		return avenueOrRoad;
+	public AvenueRoad getAvenueRoad() {
+		return avenueRoad;
 	}
 
-	public void setAvenueOrRoad(AvenueOrRoad avenueOrRoad) {
-		this.avenueOrRoad = avenueOrRoad;
+	public void setAvenueRoad(AvenueRoad avenueRoad) {
+		this.avenueRoad = avenueRoad;
 	}
 
 	public HouseNumber getHouseNumber() {
@@ -171,6 +205,10 @@ public class Client extends AbstractAggregateRoot<Client> {
 
 	public void setHouseNumber(HouseNumber houseNumber) {
 		this.houseNumber = houseNumber;
+	}
+
+	public int getAge() {
+		return LocalDate.now().getYear() - this.getBirthDate().getBirthDate().getYear();
 	}
 
 }
